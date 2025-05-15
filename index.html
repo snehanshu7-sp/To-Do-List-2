@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>To-Do List App</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      background: #f0f4f8;
+    }
+    h2 {
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 75%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      background: #fff;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .done {
+      text-decoration: line-through;
+      color: grey;
+    }
+  </style>
+</head>
+<body>
+  <h2>My To-Do List</h2>
+  <input type="text" id="taskInput" placeholder="Enter a task..." />
+  <button onclick="addTask()">Add Task</button>
+  <ul id="taskList"></ul>
+
+  <script>
+    function addTask() {
+      let taskInput = document.getElementById("taskInput");
+      let task = taskInput.value.trim();
+      if (task === "") return;
+
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks.push({ text: task, done: false });
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      taskInput.value = "";
+      displayTasks();
+    }
+
+    function displayTasks() {
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      let taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      tasks.forEach((task, index) => {
+        taskList.innerHTML += `
+          <li>
+            <span onclick="toggleDone(${index})" class="${task.done ? 'done' : ''}">
+              ${task.text}
+            </span>
+            <button onclick="deleteTask(${index})">X</button>
+          </li>
+        `;
+      });
+    }
+
+    function deleteTask(index) {
+      let tasks = JSON.parse(localStorage.getItem("tasks"));
+      tasks.splice(index, 1);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      displayTasks();
+    }
+
+    function toggleDone(index) {
+      let tasks = JSON.parse(localStorage.getItem("tasks"));
+      tasks[index].done = !tasks[index].done;
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      displayTasks();
+    }
+
+    // Load tasks on page load
+    displayTasks();
+  </script>
+</body>
+</html>
